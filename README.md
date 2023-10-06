@@ -20,6 +20,6 @@ cargo run
 You can see the results here: http://localhost:4000/account/list
 
 ## To Do
-[] Organise code: move models, routes out of main
+[x] Organise code: move models, routes out of main
 
 [] http-tower component test
