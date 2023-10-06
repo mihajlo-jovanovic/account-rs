@@ -2,9 +2,10 @@ pub mod models;
 pub mod schema;
 
 use self::models::{BankAccount, NewAccount};
-use crate::schema::bank_accounts;
-use axum::{extract::State, http::StatusCode, response::Json};
+use axum::{extract::State, headers::UserAgent, http::StatusCode, response::Json, TypedHeader};
 use diesel::{QueryDsl, RunQueryDsl, SelectableHelper};
+use crate::schema::bank_accounts;
+
 pub async fn create_account(
     State(pool): State<deadpool_diesel::postgres::Pool>,
     Json(new_account): Json<NewAccount>,
@@ -21,6 +22,9 @@ pub async fn create_account(
         .map_err(internal_error)?
         .map_err(internal_error)?;
     Ok(Json(res))
+}
+pub async fn index(TypedHeader(user_agent): TypedHeader<UserAgent>) -> String {
+    String::from(user_agent.as_str())
 }
 
 pub async fn list_accounts(
