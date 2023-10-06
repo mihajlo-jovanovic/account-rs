@@ -1,27 +1,16 @@
 use std::net::SocketAddr;
 
+use account_rs::{create_account, list_accounts};
 use axum::headers::UserAgent;
 use axum::{
     routing::{get, post},
     Router, TypedHeader,
 };
-use diesel::table;
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
-
-use account_rs::*;
 
 // this embeds the migrations into the application binary
 // the migration path is relative to the `CARGO_MANIFEST_DIR`
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("migrations/");
-
-// normally part of your generated schema.rs file
-table! {
-    bank_accounts (id) {
-        id -> Integer,
-        name -> Text,
-        stakeholder -> Text,
-    }
-}
 
 async fn index(TypedHeader(user_agent): TypedHeader<UserAgent>) -> String {
     String::from(user_agent.as_str())
@@ -29,7 +18,7 @@ async fn index(TypedHeader(user_agent): TypedHeader<UserAgent>) -> String {
 
 #[tokio::main]
 async fn main() {
-    println!("Hello, world!");
+    println!("Reading database connect info from environment variable...");
     let db_url = std::env::var("DATABASE_URL").unwrap();
 
     // set up connection pool
